@@ -1,6 +1,6 @@
 import copy
 
-def create_flow(service_spec, deployment_spec, flow_uuid, dev_branch_host, neon_project_id, neon_main_branch_id, neon_api_key):
+def create_flow(service_spec, deployment_spec, flow_uuid, dev_branch_host, NEON_PROJECT_ID, NEON_MAIN_BRANCH_ID, NEON_API_KEY):
     # assume dev branch already exists for now
 
 	# deployment_spec = create_and_replace_branch(deployment_spec)
