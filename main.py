@@ -6,7 +6,7 @@ def create_flow(service_spec, deployment_spec, flow_uuid, dev_branch_host, NEON_
 
     container = modified_deployment_spec['template']['spec']['containers'][0]
 
-    container['env'] = container.get('env', []) + [
+    container['env'] = [
         {'name': 'PG_SERVER_HOSTNAME', 'value': dev_branch_host},
         # {'name': 'NEON_API_KEY', 'value': db_user},
         # {'name': 'NEON_MAIN_BRANCH_ID', 'value': db_password},
