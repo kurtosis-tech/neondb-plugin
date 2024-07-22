@@ -1,7 +1,7 @@
 import copy
 
 def create_flow(service_spec, deployment_spec, flow_uuid, dev_branch_host, NEON_PROJECT_ID, NEON_MAIN_BRANCH_ID, NEON_API_KEY):
-    assume script exists for now
+    # assume script exists for now
     modified_deployment_spec = copy.deepcopy(deployment_spec)
 
     container = modified_deployment_spec['spec']['template']['spec']['containers'][0]
