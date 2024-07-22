@@ -4,7 +4,7 @@ def create_flow(service_spec, deployment_spec, flow_uuid, dev_branch_host, NEON_
     # assume script exists for now
     modified_deployment_spec = copy.deepcopy(deployment_spec)
 
-    container = modified_deployment_spec['spec']['template']['spec']['containers'][0]
+    container = modified_deployment_spec['template']['spec']['containers'][0]
 
     container['env'] = container.get('env', []) + [
         {'name': 'PG_SERVER_HOSTNAME', 'value': dev_branch_host},
