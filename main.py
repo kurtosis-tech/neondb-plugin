@@ -13,7 +13,7 @@ def create_flow(service_spec, deployment_spec, flow_uuid, dev_branch_host, NEON_
         # {'name': 'NEON_PROJECT_ID', 'value': db_password},
     ]
 
-    modified_deployment_spec['spec']['template']['spec']['containers'] = [container]
+    modified_deployment_spec['template']['spec']['containers'] = [container]
 
     return {
         "deployment_spec": modified_deployment_spec,
