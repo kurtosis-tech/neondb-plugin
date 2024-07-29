@@ -8,7 +8,7 @@ def create_flow(service_spec, deployment_spec, flow_uuid, dev_branch_host, NEON_
 
     container = modified_deployment_spec['template']['spec']['containers'][0]
 
-    dev_branch_host = create_neon_branch(NEON_API_KEY, NEON_PROJECT_ID, NEON_MAIN_BRANCH_ID)
+    dev_branch_host, error = create_neon_branch(NEON_API_KEY, NEON_PROJECT_ID, NEON_MAIN_BRANCH_ID)
     if error:
         # how are errors handled in plugins
         print(f"Error: {error}")
