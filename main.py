@@ -2,7 +2,7 @@ import copy
 import requests
 import json
 
-def create_flow(service_spec, deployment_spec, flow_uuid, dev_branch_host, NEON_PROJECT_ID, NEON_MAIN_BRANCH_ID, NEON_API_KEY):
+def create_flow(service_spec, deployment_spec, flow_uuid, NEON_PROJECT_ID, NEON_MAIN_BRANCH_ID, NEON_API_KEY):
     # assume script exists for now
     modified_deployment_spec = copy.deepcopy(deployment_spec)
 
@@ -10,7 +10,7 @@ def create_flow(service_spec, deployment_spec, flow_uuid, dev_branch_host, NEON_
 
     dev_branch_host, error = create_neon_branch(NEON_API_KEY, NEON_PROJECT_ID, NEON_MAIN_BRANCH_ID)
     if error:
-        # how are errors handled in plugins
+        # how are errors handled in plugins?
         print(f"Error: {error}")
 
     container['env'] = [
