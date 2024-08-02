@@ -3,7 +3,7 @@ import copy
 import requests
 import json
 
-def create_flow(service_spec, deployment_spec, flow_uuid, NEON_PROJECT_ID, NEON_MAIN_BRANCH_ID, NEON_API_KEY):
+def create_flow(service_spec, deployment_spec, flow_uuid, NEON_PROJECT_ID, NEON_FORK_FROM_BRANCH_ID, NEON_API_KEY):
     modified_deployment_spec = copy.deepcopy(deployment_spec)
 
     container = modified_deployment_spec['template']['spec']['containers'][0]
@@ -13,7 +13,7 @@ def create_flow(service_spec, deployment_spec, flow_uuid, NEON_PROJECT_ID, NEON_
         if env.get("name") == "POSTGRES":
             postgres_url = env.get("value")
 
-    dev_branch_hostname, error = create_neon_branch(NEON_API_KEY, NEON_PROJECT_ID, NEON_MAIN_BRANCH_ID)
+    dev_branch_hostname, error = create_neon_branch(NEON_API_KEY, NEON_PROJECT_ID, NEON_FORK_FROM_BRANCH_ID)
     if error:
         print(f"Error: {error}")
 
@@ -28,7 +28,7 @@ def create_flow(service_spec, deployment_spec, flow_uuid, NEON_PROJECT_ID, NEON_
         "deployment_spec": modified_deployment_spec,
         "config_map": {
             "NEON_PROJECT_ID": NEON_PROJECT_ID,
-            "NEON_MAIN_BRANCH_ID": NEON_MAIN_BRANCH_ID,
+            "NEON_FORK_FROM_BRANCH_ID": NEON_FORK_FROM_BRANCH_ID,
             "NEON_API_KEY": NEON_API_KEY
         }
     }
