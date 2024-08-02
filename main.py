@@ -78,9 +78,22 @@ def create_neon_branch(neon_api_key, project_id, parent_branch_id):
     return host, None
 
 def update_postgres_url(postgres_url, new_hostname):
+    # Parse the PostgreSQL URL
     parsed_url = urlparse(postgres_url)
-    new_netloc = f"{new_hostname}:{parsed_url.port}" if parsed_url.port else new_hostname
+
+    # Update the hostname and preserve user info and port
+    if parsed_url.username and parsed_url.password:
+        userinfo = f"{parsed_url.username}:{parsed_url.password}@"
+    elif parsed_url.username:
+        userinfo = f"{parsed_url.username}@"
+    else:
+        userinfo = ""
+
+    new_netloc = f"{userinfo}{new_hostname}:{parsed_url.port}" if parsed_url.port else f"{userinfo}{new_hostname}"
+
+    # Reconstruct the URL with the new hostname
     updated_url = urlunparse(parsed_url._replace(netloc=new_netloc))
+
     return updated_url
 
 def delete_neon_branch(config_map, service_name):
