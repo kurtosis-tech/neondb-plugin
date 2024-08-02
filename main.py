@@ -29,7 +29,7 @@ def create_flow(service_spec, deployment_spec, flow_uuid, NEON_PROJECT_ID, NEON_
         "config_map": {
             "NEON_PROJECT_ID": NEON_PROJECT_ID,
             "NEON_MAIN_BRANCH_ID": NEON_MAIN_BRANCH_ID,
-            "NEON_API_KEY": NEON_API_KEY:
+            "NEON_API_KEY": NEON_API_KEY
         }
     }
 	
