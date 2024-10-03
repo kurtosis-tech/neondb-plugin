@@ -3,10 +3,10 @@ import copy
 import requests
 import json
 
-def create_flow(service_spec, deployment_spec, flow_uuid, NEON_PROJECT_ID, NEON_FORK_FROM_BRANCH_ID, NEON_API_KEY):
-    modified_deployment_spec = copy.deepcopy(deployment_spec)
+def create_flow(service_spec, pod_spec, flow_uuid, NEON_PROJECT_ID, NEON_FORK_FROM_BRANCH_ID, NEON_API_KEY):
+    modified_pod_spec = copy.deepcopy(pod_spec)
 
-    container = modified_deployment_spec['template']['spec']['containers'][0]
+    container = modified_pod_spec['containers'][0]
 
     postgres_url = ""
     for env in container['env']:
@@ -22,10 +22,10 @@ def create_flow(service_spec, deployment_spec, flow_uuid, NEON_PROJECT_ID, NEON_
         {'name': 'POSTGRES', 'value': new_postgres_url},
     ]
 
-    modified_deployment_spec['template']['spec']['containers'] = [container]
+    modified_pod_spec['containers'] = [container]
 
     return {
-        "deployment_spec": modified_deployment_spec,
+        "pod_spec": modified_pod_spec,
         "config_map": {
             "NEON_API_KEY": NEON_API_KEY,
             "NEON_PROJECT_ID": NEON_PROJECT_ID,
