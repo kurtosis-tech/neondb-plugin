@@ -3,40 +3,66 @@ import copy
 import requests
 import json
 
-def create_flow(service_spec, pod_spec, flow_uuid, NEON_PROJECT_ID, NEON_FORK_FROM_BRANCH_ID, NEON_API_KEY):
-    modified_pod_spec = copy.deepcopy(pod_spec)
 
-    container = modified_pod_spec['containers'][0]
+def create_flow(service_spec, pod_specs, flow_uuid, NEON_PROJECT_ID, NEON_FORK_FROM_BRANCH_ID, NEON_API_KEY):
 
-    postgres_url = ""
-    for env in container['env']:
-        if env.get("name") == "POSTGRES":
-            postgres_url = env.get("value")
+    # main vars
+    modified_pod_specs = []
+    dev_branch_id = ""
 
-    dev_branch_hostname, dev_branch_id, error = create_neon_branch(NEON_API_KEY, NEON_PROJECT_ID, NEON_FORK_FROM_BRANCH_ID)
-    if error:
-        print(f"Error: {error}")
+    is_there_one_container_at_least: bool = False
+    for pod_spec in pod_specs:
+        modified_pod_spec = copy.deepcopy(pod_spec)
+        containers = modified_pod_spec.get('containers', [])
 
-    new_postgres_url = update_postgres_url(postgres_url, dev_branch_hostname)
-    container['env'] = [
-        {'name': 'POSTGRES', 'value': new_postgres_url},
-    ]
+        # Check if at least one container has been received otherwise the resource creation shouldn't be requested
+        if containers:
+            is_there_one_container_at_least = True
+            break
 
-    modified_pod_spec['containers'] = [container]
+    if is_there_one_container_at_least:
+
+        # create the external resource
+        dev_branch_hostname, dev_branch_id, error = create_neon_branch(NEON_API_KEY, NEON_PROJECT_ID, NEON_FORK_FROM_BRANCH_ID)
+        if error:
+            print(f"Error: {error}")
+
+        # edit all the pod specs to update the environment variables with the new resource address
+        for pod_spec in pod_specs:
+            modified_pod_spec = copy.deepcopy(pod_spec)
+            containers = modified_pod_spec.get('containers', [])
+
+            # Check if there are containers
+            if containers:
+                container = modified_pod_spec['containers'][0]
+
+                postgres_url = ""
+                for env in container['env']:
+                    if env.get("name") == "POSTGRES":
+                        postgres_url = env.get("value")
+
+                new_postgres_url = update_postgres_url(postgres_url, dev_branch_hostname)
+                container['env'] = [
+                    {'name': 'POSTGRES', 'value': new_postgres_url},
+                ]
+
+            modified_pod_spec['containers'] = [container]
 
     return {
-        "pod_spec": modified_pod_spec,
+        "pod_specs": modified_pod_specs,
         "config_map": {
             "NEON_API_KEY": NEON_API_KEY,
             "NEON_PROJECT_ID": NEON_PROJECT_ID,
             "NEON_BRANCH_ID": dev_branch_id,
         }
     }
-	
+
+
 def delete_flow(config_map, flow_uuid):
     resopnse = delete_neon_branch(config_map["NEON_API_KEY"], config_map["NEON_PROJECT_ID"], config_map["NEON_BRANCH_ID"])
     print(resopnse)
     return
+
 
 def create_neon_branch(neon_api_key, project_id, parent_branch_id):
     url = f"https://console.neon.tech/api/v2/projects/{project_id}/branches"
@@ -80,6 +106,7 @@ def create_neon_branch(neon_api_key, project_id, parent_branch_id):
 
     return host, branch_id, None
 
+
 def delete_neon_branch(neon_api_key, project_id, branch_id):
     url = f"https://console.neon.tech/api/v2/projects/{project_id}/branches/{branch_id}"
 
@@ -99,6 +126,7 @@ def delete_neon_branch(neon_api_key, project_id, branch_id):
 
     return "Branch deleted successfully"
 
+
 def update_postgres_url(postgres_url, new_hostname):
     parsed_url = urlparse(postgres_url)
 
@@ -113,4 +141,3 @@ def update_postgres_url(postgres_url, new_hostname):
     updated_url = urlunparse(parsed_url._replace(netloc=new_netloc))
 
     return updated_url
-
