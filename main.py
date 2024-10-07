@@ -4,7 +4,7 @@ import requests
 import json
 
 
-def create_flow(service_spec, pod_specs, flow_uuid, NEON_PROJECT_ID, NEON_FORK_FROM_BRANCH_ID, NEON_API_KEY):
+def create_flow(service_specs: list, pod_specs: list, flow_uuid, NEON_PROJECT_ID, NEON_FORK_FROM_BRANCH_ID, NEON_API_KEY):
 
     # main vars
     modified_pod_specs = []
